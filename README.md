@@ -1,39 +1,70 @@
-# Devops
+# Spring Functions
 
-## 3 Key Elements of a Great Software: 
-   Enhanced communication.  
-   Automation.  
-   Quick Feedback.  
-
-## Agile -> (Brings business and development teams together and immediate feedback is given at the end of each sprint)
-  Involves business teams and development teams   
-  Quick Feedback.   
-  Continuous Integration.     
-
-## Microservices -> 
-As they evolved Operations team had a big role to play.   
-DevOps evolved.   
-
-## DevOps -> 
-  Enhance communication between Development & Operations teams.  
-  Continuous Deployment (deploy new version of software continuously).  
-  Continuous Delivery (deploy software into production continuously).     
-  Infrastructure as Code.  
-
-Continuous Development: Git, SVN, Mercurial, CVS, Jira   
-Continuous Integration: Jenkins, Bamboo, Hudson    
-Continuous Delivery: Nexus, Archiva, Tomcat   
-Continuous Deployment: Puppet, Chef, Docker   
-Continuous Monitoring: Splunk, ELK Stack, Nagios     
-Continuous Testing: Selenium, Katalon Studio   
+## First Sample - newsletter-demo
+```xml
 
 
-## Infrastructure as code:   
-Create Template -> Provision Server -> Install software -> Configure Software -> Deploy App    
+1. Create a new maven project and add following dependencies to it 
 
-Provisioning server can be done by AWS Cloudformation or Terraform    
-Install software/Configure Software (both are configuration management) and can be done by Chef, Ansible or puppet.     
-Deploy App can be done with Jenkins or Azure DevOps.    
+   Spring web:  
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    
+   Function: 
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-function-web</artifactId>
+    </dependency>
+
+2. Create a model class called Subscriber inside the model package
+
+This class will have two private fields id & email
+
+Create getters, setters, constructor (using both fields) and toString method (using both fields)
+
+3. Create a service class called SubscriberService inside the service package
+
+Create the @Service annotation on the class level
+
+Create the following: 
+  List<Subscriber> subscribers=new ArrayList<>();
+  AtomicInteger id=new AtomicInteger(0);
+
+  //function to get all subscribers 
+  public List<Subscriber> findAll() {
+    return subscribers;
+  }
+
+  // function to create a new subscriber
+  public void create(String email) {
+    subscribers.add(new Subscriber(id.addAndGet(1), email));
+  }
+  
+4. Create a class called Subscribers inside the function package
+
+Create the @Configuration annotation on the class level
+
+Autowire SubscriberService into this class
+
+Create the following: 
+  @Bean
+  public Supplier<List<Subscriber>> findAll() {
+    return () -> subscriberService.findAll();
+  }
+  
+  @Bean
+  public Consumer<String> create() {
+    return (email) -> subscriberService.create(email);
+  }
+
+
+5. This standard package can be deployed on any Cloud autoscaller (Azure, GCP, AWS)
+
+
+
+```
 
 
 ### References:
