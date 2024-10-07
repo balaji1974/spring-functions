@@ -3,7 +3,6 @@
 ## First Sample - newsletter-demo
 ```xml
 
-
 1. Create a new maven project and add following dependencies to it 
 
    Spring web:  
