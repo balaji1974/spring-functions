@@ -47,6 +47,11 @@ Create the @Configuration annotation on the class level
 
 Autowire SubscriberService into this class
 
+Spring cloud function is build on top of 3 functional interfaces in Java8:
+Supplier<O>
+Function<I, O>
+Consumer<I>
+
 Create the following: 
   @Bean
   public Supplier<List<Subscriber>> findAll() {
@@ -66,8 +71,17 @@ curl 'http://localhost:8080/create' --header 'Content-Type: application/json' --
 curl 'http://localhost:8080/findAll'
 
 
+6. That's it. We have created our first Cloud Function
 
-6. Adding the cloud platform adapter
+```
+
+## Adding Cloud Platform Adapters
+
+### AWS Adapter
+```xml
+
+
+1. Adding the cloud platform adapter
 
 For AWS
   <dependency>
@@ -90,7 +104,7 @@ For Azure
 We will the deploying our package on AWS but the steps are same on all cloud platforms.
 
 
-7. Adding the maven thin plugin and shade plugin 
+2. Add the maven thin plugin and shade plugin 
 
 In the plug in section comment the following:
 
@@ -160,7 +174,7 @@ Next add the following plugins:
       </plugin>
 
 
-8. Create the jar file: 
+3. Create the jar file: 
 
 Execute the following from the IDE:
 mvn cleam
@@ -177,7 +191,7 @@ eg. newsletter-demo-0.0.1-SNAPSHOT-aws.jar
 This package can be deployed on AWS
 
 
-9. Deploy the package on AWS 
+4. Deploy the package on AWS 
 Login into the AWS console 
 
 Go to Lambda screen 
@@ -191,7 +205,7 @@ Next go to Run time settings -> Edit -> Handler : org.springframework.cloud.func
 
 Now the Environment is ready for running
 
-10. Function configration settings
+5. Function configration settings
 
 Since we have multiple functions wrapped into a single jar, we have to instruct AWS how to invoke them. 
 Go to Configuration tab -> Function URL -> Auth : None (this is just for testing purpose and not for production use case, where you will use IAM) 
@@ -199,7 +213,7 @@ Go to Configuration tab -> Function URL -> Auth : None (this is just for testing
 
 Next copy the URL of the function 
 
-11. Invoke the function 
+6. Invoke the function 
 Go to postman -> 
 
 Method: POST 
@@ -217,11 +231,11 @@ Header: spring.cloud.function.definition: findAll (Since we have mulitple functi
 This will fetch all the records using our lambda function
 
 
-12. Monitoring the log
+7. Monitoring the log
 Go to Cloud Watch -> Logs Group -> (Select our function) -> (click on the appropriate log stream)
 
 
-That's it. We have created our first Function and executed it on Cloud using Spring Cloud Function 
+ 8. We have now run our Spring Cloud Function using AWS Adapter 
 
 ```
 
