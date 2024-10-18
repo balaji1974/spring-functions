@@ -80,8 +80,10 @@ curl 'http://localhost:8080/findAll'
 ### AWS Adapter
 ```xml
 
+1. Copy the newletter-demo project and create a new project called aws-adapter 
 
-1. Adding the cloud platform adapter
+
+2. Next add the cloud platform adapter
 
 For AWS
   <dependency>
@@ -89,22 +91,10 @@ For AWS
       <artifactId>spring-cloud-function-adapter-aws</artifactId>
     </dependency>
 
-For GCP
-  <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-function-adapter-gcp</artifactId>
-    </dependency>
-
-For Azure
-  <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-function-adapter-azure</artifactId>
-    </dependency>
-
 We will the deploying our package on AWS but the steps are same on all cloud platforms.
 
 
-2. Add the maven thin plugin and shade plugin 
+3. Add the maven thin plugin and shade plugin 
 
 In the plug in section comment the following:
 
@@ -174,7 +164,7 @@ Next add the following plugins:
       </plugin>
 
 
-3. Create the jar file: 
+4. Create the jar file: 
 
 Execute the following from the IDE:
 mvn cleam
@@ -186,12 +176,12 @@ From the command line run the following:
 mvn clean package 
 
 This will create 2 jar files, the usual standalone .jar file and AWS jar file ending with -aws.jar 
-eg. newsletter-demo-0.0.1-SNAPSHOT-aws.jar
+eg. aws-adapter-0.0.1-SNAPSHOT-aws.jar
 
 This package can be deployed on AWS
 
 
-4. Deploy the package on AWS 
+5. Deploy the package on AWS 
 Login into the AWS console 
 
 Go to Lambda screen 
@@ -205,7 +195,7 @@ Next go to Run time settings -> Edit -> Handler : org.springframework.cloud.func
 
 Now the Environment is ready for running
 
-5. Function configration settings
+6. Function configration settings
 
 Since we have multiple functions wrapped into a single jar, we have to instruct AWS how to invoke them. 
 Go to Configuration tab -> Function URL -> Auth : None (this is just for testing purpose and not for production use case, where you will use IAM) 
@@ -213,7 +203,7 @@ Go to Configuration tab -> Function URL -> Auth : None (this is just for testing
 
 Next copy the URL of the function 
 
-6. Invoke the function 
+7. Invoke the function 
 Go to postman -> 
 
 Method: POST 
@@ -231,14 +221,30 @@ Header: spring.cloud.function.definition: findAll (Since we have mulitple functi
 This will fetch all the records using our lambda function
 
 
-7. Monitoring the log
+8. Monitoring the log
 Go to Cloud Watch -> Logs Group -> (Select our function) -> (click on the appropriate log stream)
 
 
- 8. We have now run our Spring Cloud Function using AWS Adapter 
+9. We have now run our Spring Cloud Function using AWS Adapter 
 
 ```
 
+
+###
+```xml
+
+For GCP
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-function-adapter-gcp</artifactId>
+    </dependency>
+
+For Azure
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-function-adapter-azure</artifactId>
+    </dependency>
+```
 
 ### References:
 https://www.udemy.com/course/devops-with-docker-kubernetes-and-azure-devops
