@@ -77,7 +77,7 @@ curl 'http://localhost:8080/findAll'
 
 ## Adding Cloud Platform Adapters
 
-### AWS Adapter
+### AWS Adapter - aws-adapter
 ```xml
 
 1. Copy the newletter-demo project and create a new project called aws-adapter 
@@ -230,14 +230,134 @@ Go to Cloud Watch -> Logs Group -> (Select our function) -> (click on the approp
 ```
 
 
-###
+### Google Adapter - gcp-adapter
+
+### [At present GCP has a bug which is not solved as of date and hence Spring boot 3.1.X only works and any version above 3.2.x does not work until date of this upload]
+Ref link: https://github.com/spring-cloud/spring-cloud-function/issues/1085
+
 ```xml
 
+1. Copy the newletter-demo project and create a new project called gcp-adapter 
+
+2. Downgrade Spring boot to 3.1.x version
+
+<parent>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-parent</artifactId>
+  <version>3.1.10</version>
+  <relativePath/> 
+</parent>
+
+3. Next add the cloud platform adapter
+
 For GCP
-  <dependency>
+    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-function-adapter-gcp</artifactId>
     </dependency>
+
+We will the deploying our package on GCP using the same steps as before (but with lesser version  dependency.
+
+4. Add the following plugin 
+
+In the plug in section comment the following:
+
+        <!--
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      -->
+
+Next add the following plugins:
+
+  <plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+      <outputDirectory>target/deploy</outputDirectory>
+    </configuration>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-function-adapter-gcp</artifactId>
+        <version>4.1.1</version> <!-- Lesser version than AWS -->
+      </dependency>
+    </dependencies>
+  </plugin>
+  <plugin>
+    <groupId>com.google.cloud.functions</groupId>
+    <artifactId>function-maven-plugin</artifactId>
+    <version>0.9.1</version> <!-- Lesser version than AWS -->
+    <configuration>
+      <functionTarget>org.springframework.cloud.function.adapter.gcp.GcfJarLauncher</functionTarget>
+      <port>8080</port>
+    </configuration>
+  </plugin>
+
+
+5. Create the jar file: 
+
+Execute the following from the IDE:
+mvn cleam
+mvn install 
+
+(or)
+
+From the command line run the following: 
+mvn clean package 
+
+This will create 2 jar files, the usual standalone .jar file and AWS jar file ending with -aws.jar 
+eg. google-adapter-0.0.1-SNAPSHOT.jar
+
+This package can be deployed on GCP
+
+
+6. Install gcloud -> as GCP web console deploy still not supporting jar file 
+
+7. Deploy the package on GCP 
+Login into gcloud and run the following command
+
+gcloud functions deploy <function-name> --entry-point org.springframework.cloud.function.adapter.gcp.GcfJarLauncher --runtime <java-runtime> --trigger-http --source target/deploy --memory <memory-size>
+gcloud functions deploy function-spring-cloud-gcp --entry-point org.springframework.cloud.function.adapter.gcp.GcfJarLauncher --runtime java17 --trigger-http --source target/deploy --memory 512MB
+
+
+It will ask if anynamous login is allowed (y/N) -> y (press)
+
+Now the function is deployed and running
+
+
+8. Invoke the function 
+Go to postman -> 
+
+Method: POST 
+URL: <url that was copied>
+Header: spring.cloud.function.definition: create (Since we have mulitple functions in our jar we need to make sure which function to call)
+Body: raw : balaji@gmail.com
+-> Send
+This will create a record using our cloud run function
+
+
+Method: GET 
+URL: <url that was copied>
+Header: spring.cloud.function.definition: findAll (Since we have mulitple functions in our jar we need to make sure which function to call)
+-> Send
+This will fetch all the records using our cloud run function
+
+
+9. Monitoring the log
+Go to GCP Console -> Search and select 'cloud run function' -> Click on our function (eg.function-spring-cloud-gcp) -> Click the logs tab 
+
+
+10. We have now run our Spring Cloud Function using GCP Adapter 
+
+```
+
+
+###
+```xml
+
+
 
 For Azure
   <dependency>
