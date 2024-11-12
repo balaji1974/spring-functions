@@ -1,0 +1,1 @@
+Main-Class: com.balaji.spring.function.azure_adapter.AzureAdapterApplication

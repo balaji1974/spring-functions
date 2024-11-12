@@ -1,0 +1,11 @@
+{
+  "scriptFile" : "../azure-adapter-0.0.1-SNAPSHOT.jar",
+  "entryPoint" : "com.balaji.spring.function.azure_adapter.functions.MyAzureFunction.springCloudFunctionCreate",
+  "bindings" : [ {
+    "type" : "httpTrigger",
+    "direction" : "in",
+    "name" : "req",
+    "methods" : [ "POST" ],
+    "authLevel" : "ANONYMOUS"
+  } ]
+}

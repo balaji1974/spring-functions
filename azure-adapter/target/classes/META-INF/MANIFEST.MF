@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 21
+Implementation-Title: azure-adapter
+Implementation-Version: 0.0.1-SNAPSHOT
+Main-Class: com.balaji.spring.function.azure_adapter.AzureAdapterApplica
+ tion
+Created-By: Maven Integration for Eclipse
+

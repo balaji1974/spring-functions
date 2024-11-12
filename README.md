@@ -232,7 +232,7 @@ Go to Cloud Watch -> Logs Group -> (Select our function) -> (click on the approp
 
 ### Google Adapter - gcp-adapter
 
-### [At present GCP has a bug which is not solved as of date and hence Spring boot 3.1.X only works and any version above 3.2.x does not work until date of this upload]
+### [At present GCP has a bug which is not solved as of date of uploading this example and hence Spring boot 3.1.X only works and any version above 3.2.x does not work]
 Ref link: https://github.com/spring-cloud/spring-cloud-function/issues/1085
 
 ```xml
@@ -314,6 +314,9 @@ This package can be deployed on GCP
 
 
 6. Install gcloud -> as GCP web console deploy still not supporting jar file 
+For installation follow the steps from the below link, if already not installed:
+https://cloud.google.com/sdk/docs/downloads-interactive
+
 
 7. Deploy the package on GCP 
 Login into gcloud and run the following command
@@ -354,17 +357,217 @@ Go to GCP Console -> Search and select 'cloud run function' -> Click on our func
 ```
 
 
-###
+### Azure Adapter - azure-adapter
 ```xml
 
+1. Note: Make sure the correct correct JDK path is set in the JAVA_HOME env variable 
 
+2. Copy the newletter-demo project and create a new project called azure-adapter 
+
+
+3. Next add the cloud platform adapter
 
 For Azure
   <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-function-adapter-azure</artifactId>
-    </dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-function-adapter-azure</artifactId>
+  </dependency>
+
+We will the deploying our package on Azure cloud platforms.
+
+
+4. Add the following plugin 
+
+In the plug in section comment the following:
+
+        <!--
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      -->
+
+Next add the following plugins:
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.microsoft.azure</groupId>
+        <artifactId>azure-functions-maven-plugin</artifactId>
+        <version>${azure.functions.maven.plugin.version}</version>
+
+        <configuration>
+          <appName>${functionAppName}</appName>
+          <resourceGroup>${functionResourceGroup}</resourceGroup>
+          <region>${functionAppRegion}</region>
+          <appServicePlanName>${functionAppServicePlanName}</appServicePlanName>
+          <pricingTier>${functionPricingTier}</pricingTier>
+
+          <hostJson>${project.basedir}/src/main/resources/host.json</hostJson>
+          <localSettingsJson>${project.basedir}/src/main/resources/local.settings.json</localSettingsJson>
+
+
+          <runtime>
+            <os>linux</os>
+            <javaVersion>17</javaVersion>
+          </runtime>
+
+          <funcPort>7072</funcPort>
+
+          <appSettings>
+            <property>
+              <name>FUNCTIONS_EXTENSION_VERSION</name>
+              <value>~4</value>
+            </property>
+          </appSettings>
+        </configuration>
+        <executions>
+          <execution>
+            <id>package-functions</id>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.springframework.boot.experimental</groupId>
+            <artifactId>spring-boot-thin-layout</artifactId>
+            <version>${spring-boot-thin-layout.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+
+5. Add the following properties 
+    <java.version>17</java.version>
+    <spring-boot-thin-layout.version>1.0.28.RELEASE</spring-boot-thin-layout.version>
+
+    <!-- Spring Boot start class! WARING: correct class must be set! -->
+    <start-class>com.balaji.spring.function.azure_adapter.AzureAdapterApplication</start-class>
+
+    <!-- AZURE FUNCTION CONFIG ---- WARING: set your correct  Azure function app settings! -->
+
+    <azure.functions.maven.plugin.version>1.28.0</azure.functions.maven.plugin.version>
+    <functionAppName>function-spring-cloud-azure</functionAppName>
+    <functionAppRegion>westus</functionAppRegion>
+    <functionResourceGroup>java-function-group</functionResourceGroup>
+    <functionAppServicePlanName>java-function-app-service-plan</functionAppServicePlanName>
+    <functionPricingTier>Consumption</functionPricingTier>
+
+The values for the above setting can also be referenced from the below link:
+https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions
+
+
+6. Add the class MyAzureFunction and check this code. 
+This function acts as the azure function exposed API translating it to the internal functions of the spring boot world
+
+
+7. Create configuation json files: 
+host.json
+and 
+local.settings.json
+
+
+8. Create the jar file: 
+
+Execute the following from the IDE:
+mvn cleam
+mvn install 
+
+(or)
+
+From the command line run the following: 
+mvn clean package 
+
+This will create 1 jar file, the usual standalone .jar file 
+eg. azure-adapter-0.0.1-SNAPSHOT-aws.jar
+
+This package can be deployed on Azure
+
+
+9. Install azure core tools to test the function locally 
+
+Make sure Homebrew is installed on MAC OS 
+(for other OS please follow this link 
+https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=macos%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-java
+)
+
+brew tap azure/functions
+brew install azure-functions-core-tools@4
+# if upgrading on a machine that has 2.x or 3.x installed:
+brew link --overwrite azure-functions-core-tools@4
+
+10. Run locally and test the function with the following command using core tools:  
+mvn azure-functions:run     
+
+11. Invoke the function locally and test with POSTMAN
+
+Go to postman -> 
+
+Method: POST 
+URL: http://localhost:7072/api/create
+Body: raw : balaji@gmail.com
+-> Send
+This will create a record using our azure function
+
+
+Method: GET 
+URL: http://localhost:7072/api/findAll
+-> Send
+This will fetch all the records using our azure function
+
+
+12. Next Deploy the function on to Azure Cloud Environment
+Login into the Azure console from the command promt by running the  command
+az login 
+
+
+13. Deploy the function app to azure 
+mvn azure-functions:run 
+
+
+14. Open the function app for public access 
+After successfull installation, go to Azure Web Console -> Function App -> <Select the installed function> -> 
+Settings -> Networking -> Public Access Network: Enabled with no access restrictions  (click) -> Enable from all networks -> Save
+
+
+15. Next copy the function app URL from the overview tab
+
+16. Invoke the function 
+Go to postman -> 
+
+Method: POST 
+URL: <url that was copied>/api/create 
+Body: raw : balaji@gmail.com
+-> Send
+This will create a record using our lambda function
+
+
+Method: GET 
+URL: <url that was copied>/api/get
+-> Send
+This will fetch all the records using our lambda function
+
+
+17. We have now run our Spring Cloud Function using Azure Adapter 
+
 ```
+
 
 ### References:
 https://www.udemy.com/course/devops-with-docker-kubernetes-and-azure-devops
+https://docs.spring.io/spring-cloud-function/reference/spring-cloud-function/serverless-platform-adapters.html
+https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions
+https://github.com/microsoft/azure-maven-plugins/wiki/Common-Configuration
+https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local

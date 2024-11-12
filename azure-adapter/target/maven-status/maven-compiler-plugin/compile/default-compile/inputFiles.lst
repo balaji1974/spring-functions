@@ -1,0 +1,5 @@
+/Users/balaji/eclipse-workspace/functions/azure-adapter/src/main/java/com/balaji/spring/function/azure_adapter/AzureAdapterApplication.java
+/Users/balaji/eclipse-workspace/functions/azure-adapter/src/main/java/com/balaji/spring/function/azure_adapter/functions/MyAzureFunction.java
+/Users/balaji/eclipse-workspace/functions/azure-adapter/src/main/java/com/balaji/spring/function/azure_adapter/functions/Subscribers.java
+/Users/balaji/eclipse-workspace/functions/azure-adapter/src/main/java/com/balaji/spring/function/azure_adapter/model/Subscriber.java
+/Users/balaji/eclipse-workspace/functions/azure-adapter/src/main/java/com/balaji/spring/function/azure_adapter/service/SubscriberService.java
