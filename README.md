@@ -387,7 +387,7 @@ In the plug in section comment the following:
       </plugin>
       -->
 
-Next add the following plugins:
+5. Next add the following plugins:
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -449,7 +449,7 @@ Next add the following plugins:
       </plugin>
 
 
-5. Add the following properties 
+6. Add the following properties 
     <java.version>17</java.version>
     <spring-boot-thin-layout.version>1.0.28.RELEASE</spring-boot-thin-layout.version>
 
@@ -469,17 +469,17 @@ The values for the above setting can also be referenced from the below link:
 https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions
 
 
-6. Add the class MyAzureFunction and check this code. 
+7. Add the class MyAzureFunction and check this code. 
 This function acts as the azure function exposed API translating it to the internal functions of the spring boot world
 
 
-7. Create configuation json files: 
+8. Create configuation json files: 
 host.json
 and 
 local.settings.json
 
 
-8. Create the jar file: 
+9. Create the jar file: 
 
 Execute the following from the IDE:
 mvn cleam
@@ -496,7 +496,7 @@ eg. azure-adapter-0.0.1-SNAPSHOT-aws.jar
 This package can be deployed on Azure
 
 
-9. Install azure core tools to test the function locally 
+10. Install azure core tools to test the function locally 
 
 Make sure Homebrew is installed on MAC OS 
 (for other OS please follow this link 
@@ -508,10 +508,10 @@ brew install azure-functions-core-tools@4
 # if upgrading on a machine that has 2.x or 3.x installed:
 brew link --overwrite azure-functions-core-tools@4
 
-10. Run locally and test the function with the following command using core tools:  
+11. Run locally and test the function with the following command using core tools:  
 mvn azure-functions:run     
 
-11. Invoke the function locally and test with POSTMAN
+12. Invoke the function locally and test with POSTMAN
 
 Go to postman -> 
 
@@ -528,23 +528,23 @@ URL: http://localhost:7072/api/findAll
 This will fetch all the records using our azure function
 
 
-12. Next Deploy the function on to Azure Cloud Environment
+13. Next Deploy the function on to Azure Cloud Environment
 Login into the Azure console from the command promt by running the  command
 az login 
 
 
-13. Deploy the function app to azure 
+14. Deploy the function app to azure 
 mvn azure-functions:run 
 
 
-14. Open the function app for public access 
+15. Open the function app for public access 
 After successfull installation, go to Azure Web Console -> Function App -> <Select the installed function> -> 
 Settings -> Networking -> Public Access Network: Enabled with no access restrictions  (click) -> Enable from all networks -> Save
 
 
-15. Next copy the function app URL from the overview tab
+16. Next copy the function app URL from the overview tab
 
-16. Invoke the function 
+17. Invoke the function 
 Go to postman -> 
 
 Method: POST 
@@ -560,14 +560,16 @@ URL: <url that was copied>/api/get
 This will fetch all the records using our lambda function
 
 
-17. We have now run our Spring Cloud Function using Azure Adapter 
+18. We have now run our Spring Cloud Function using Azure Adapter 
 
 ```
 
 
 ### References:
+```xml
 https://www.udemy.com/course/devops-with-docker-kubernetes-and-azure-devops
 https://docs.spring.io/spring-cloud-function/reference/spring-cloud-function/serverless-platform-adapters.html
 https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions
 https://github.com/microsoft/azure-maven-plugins/wiki/Common-Configuration
 https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local
+```
